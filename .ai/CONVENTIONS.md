@@ -22,6 +22,7 @@ Derived from the scripts as they exist today.
 - Pin nothing ad hoc: put a version that can change (for example `K8S_MINOR`) in a variable at the top of the library.
 - Default to `signed-by` keyrings for new repositories and to `snap`/`flatpak` for proprietary GUI apps.
 - Do not hardcode Ubuntu codenames; use `$CODENAME` and handle unsupported codenames explicitly (see `install_virtualbox`).
+- Guard `amd64`-only vendors by `$ARCH` and skip them with a warning on other architectures (see `install_spotify`, `install_virtualbox`) instead of letting `apt` fail.
 - Keep English for technical context; match the existing mixed PT/EN comments only where the repository already does.
 
 ## Documentation

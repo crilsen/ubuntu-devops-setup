@@ -1,6 +1,6 @@
 # ubuntu-devops-setup
 
-Scripts to prepare an Ubuntu machine with the common software a developer, DevOps, or platform engineer needs, with optional Active Directory / domain-controller integration.
+Scripts to prepare an Ubuntu machine with the common software a developer, DevOps, or platform engineer needs. Active Directory / domain-controller integration is planned but not implemented yet.
 
 ## Scripts
 
@@ -28,3 +28,5 @@ Switchable options (set before running): `K8S_MINOR`, `APT_UPGRADE`, `ENABLE_PAS
 ## Target
 
 Ubuntu **24.04 / 26.04 LTS and derivatives**, on `amd64`/`arm64`, installing the newest available versions of each app. The scripts no longer use `apt-key`, Docker Compose v1, or the legacy `ms-teams` package; Teams is installed via **Teams for Linux**.
+
+Vendors that publish `amd64` only (Spotify, VirtualBox) are skipped with a warning on `arm64`.

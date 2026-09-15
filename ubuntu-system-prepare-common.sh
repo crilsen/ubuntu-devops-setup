@@ -211,8 +211,12 @@ install_teams() {
 
 install_spotify() {
   log "Spotify"
+  if [[ "$ARCH" != "amd64" ]]; then
+    warn "Spotify publishes amd64-only packages; skipping on $ARCH."
+    return 0
+  fi
   add_apt_repo spotify https://download.spotify.com/debian/pubkey_5384CE82BA52C83A.asc \
-    "deb [signed-by=@KEY@] https://repository.spotify.com stable non-free"
+    "deb [arch=amd64 signed-by=@KEY@] https://repository.spotify.com stable non-free"
   apt_update
   apt_install spotify-client
 }
@@ -241,6 +245,10 @@ install_discord() {
 
 install_virtualbox() {
   log "VirtualBox"
+  if [[ "$ARCH" != "amd64" ]]; then
+    warn "VirtualBox has no arm64 Linux build; skipping on $ARCH."
+    return 0
+  fi
   case "$CODENAME" in
     jammy | noble)
       add_apt_repo virtualbox https://www.virtualbox.org/download/oracle_vbox_2016.asc \

@@ -107,6 +107,41 @@ Consequences:
 - Google Drive automation previously implied by PyDrive must use a venv/pipx or a dedicated client; none is installed by default.
 - `aws-iam-authenticator`, if still needed for an old workflow, must be installed separately.
 
+## ADR-007 — Security-affecting defaults stay enabled but switchable
+
+Status: Accepted
+
+Context:
+After modernization, `ENABLE_PASSWORDLESS_SUDO`, `DISABLE_UFW`, and `DISABLE_CUPS` default to `1`, reproducing the pre-modernization behavior. These weaken host security: passwordless sudo, and the firewall and printing services disabled.
+
+Decision:
+Keep the defaults at `1` for behavior parity, document the impact in `README.md`, and keep each value switchable at the top of the shared library.
+
+Reasoning:
+The scripts bootstrap the author's own physical, VM, and WSL machines, where these settings were already used deliberately; silently flipping the defaults would change the author's environment. Explicit variables plus documentation keep the trade-off visible.
+
+Consequences:
+- Fresh runs keep the author's prior posture.
+- The defaults are unsuitable for shared or managed hosts; those callers must set `ENABLE_PASSWORDLESS_SUDO=0`, `DISABLE_UFW=0`, `DISABLE_CUPS=0`.
+- Revisiting any default is a one-line change in `ubuntu-system-prepare-common.sh`.
+
+## ADR-008 — Defer Active Directory / domain-controller integration
+
+Status: Accepted
+
+Context:
+`PROJECT.md` and `README.md` mention optional AD/domain-controller integration, but the 20.04-era commented `realmd`/`sssd`/`realm join` and `cid` steps did not survive the modernization, so no code implements it.
+
+Decision:
+Treat AD/domain integration as out of scope until explicitly requested and keep no dead code for it. Correct `README.md` to state it is planned but not implemented, and track it in `TASKS.md`.
+
+Reasoning:
+Joining a domain is environment-specific (realm, credentials, DNS) and cannot be validated generically; shipping untested `realm join` logic is riskier than documenting the gap.
+
+Consequences:
+- The repository no longer overclaims AD support.
+- Future AD support should be an opt-in installer with its own validation.
+
 Use this ADR format for durable, meaningful decisions:
 
 ```text

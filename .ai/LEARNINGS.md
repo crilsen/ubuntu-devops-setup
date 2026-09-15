@@ -108,3 +108,13 @@ Context: Completing the pending shellcheck + end-to-end validation from the Resu
 Evidence: `koalaman/shellcheck:stable` reported only `SC1091` on `CODENAME="$(. /etc/os-release && ...)"`; adding `# shellcheck source=/dev/null` made all four scripts clean. `ubuntu-system-prepare-wsl-dev.sh` ran to exit 0 in `docker run --rm --privileged -v "$PWD:/work:ro" ubuntu:24.04` (arm64, `APT_UPGRADE=0`): the k8s `v1.36` repo resolves (`kubectl 1.36.4`), Docker CE 29.8.0 installs, and `has_systemd` correctly skips service tuning in the container.
 Pattern / rule: Lint external `source` chains with an explicit `# shellcheck source=...` directive, and use a privileged `ubuntu:24.04` container with `APT_UPGRADE=0` as the disposable target for the non-GUI scripts.
 Promotion: VALIDATION.md, TOOLS.md
+
+### L-008 — Some vendors are amd64-only; container results can be artifacts
+Date: 2026-09-15
+Status: active
+Confidence: observed
+Scope: ubuntu-system-prepare-common.sh
+Context: Function-level validation of the physical/`vm-dev` installers on `ubuntu:24.04` arm64.
+Evidence: `spotify-client` is `amd64`-only (repo has no arm64 `Packages`) and `install_virtualbox` fetches an `arch=amd64` Oracle repo, both failing on arm64; guards were added. AnyDesk 8.0.4 arm64 downloads and installs but its dpkg postinst exits 1 without systemd, and `snap install` cannot talk to snapd in the container — both are environment artifacts, not script bugs. Chrome, VS Code, and Sublime installed fine on arm64.
+Pattern / rule: Distinguish a real portability bug from a headless-container artifact before "fixing" it; guard genuinely `amd64`-only vendors (Spotify, VirtualBox) by `$ARCH`.
+Promotion: none

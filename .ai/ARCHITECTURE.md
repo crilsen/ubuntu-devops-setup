@@ -42,6 +42,7 @@ The repository is a set of Bash provisioning scripts for Ubuntu, one entry point
 - Invalid installs fixed: `puthon3` → `python3`, `java-default` → `default-jdk`, `aws-iam-authenticatorku` removed.
 - `aws-iam-authenticator` dropped because AWS CLI v2 provides `aws eks get-token`.
 - Architecture detection for AWS CLI and TeamViewer; `VirtualBox` uses Oracle's repo only where published, otherwise the Ubuntu package.
+- `amd64`-only vendors (Spotify, VirtualBox) are skipped with a warning on `arm64` (`install_spotify`/`install_virtualbox`).
 - Idempotency, error handling (`set -euo pipefail`), and a real root guard added; `sudo`/bare-command mixing removed.
 - Shared logic moved to `ubuntu-system-prepare-common.sh` (ADR-005), removing the triplicated blocks.
 
