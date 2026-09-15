@@ -2,12 +2,12 @@
 
 ## Resume block (read first)
 
-- Repo state: branch `dev`, HEAD `b7bbe9d`, working tree `dirty: untracked .ai/, AGENTS.md, .DS_Store, ubuntu-system-prepare-common.sh; modified README.md and ubuntu-system-prepare*.sh`
+- Repo state: branch `dev` (tracking `origin/dev`), HEAD `799a37b`, working tree `clean`
 - Source of truth: `AGENTS.md` → `.ai/`
 - Budget / usage observed: `<unknown>`
 - Checkpoint updated: `2026-09-15`
 - Last goal: Modernize the provisioning scripts and validate them (shellcheck + container run).
-- Exact next action: Validate `ubuntu-system-prepare.sh` and `ubuntu-system-prepare-vm-dev.sh` end-to-end on a disposable Ubuntu 24.04/26.04 desktop (snap/flatpak/GUI); then commit and push the modernization (context and scripts are still uncommitted).
+- Exact next action: Validate `ubuntu-system-prepare.sh` and `ubuntu-system-prepare-vm-dev.sh` end-to-end on a disposable Ubuntu 24.04/26.04 desktop (snap/flatpak/GUI); decide the security defaults and the AD/PyDrive questions in `TASKS.md`.
 - Blocked by: No disposable Ubuntu desktop target available in this session (only a headless container, which covers the WSL entry point).
 - Resume prompt: `Read AGENTS.md and .ai/HANDOFF.md. Continue from the Resume block. Do not rediscover context.`
 
@@ -52,7 +52,7 @@ The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-p
 - `ENABLE_PASSWORDLESS_SUDO=1`, `DISABLE_UFW=1`, `DISABLE_CUPS=1` carry security impact and are on by default for behavior parity.
 - `K8S_MINOR` defaults to `v1.36` and may lag the latest release.
 - PyDrive was removed; no Google Drive client is installed now.
-- `.ai/`, `AGENTS.md`, and `ubuntu-system-prepare-common.sh` remain untracked; commit and push is required before any agent or machine switch (L-002). `.DS_Store` is untracked noise (consider `.gitignore`).
+- Committed and pushed to `origin/dev` (`799a37b`); `.DS_Store` is ignored via `.gitignore`.
 
 ## Validation Performed
 
