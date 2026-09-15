@@ -2,12 +2,12 @@
 
 ## Resume block (read first)
 
-- Repo state: branch `dev` (tracking `origin/dev`), HEAD `c7c23ce`, working tree `dirty: modified README.md, .ai/TASKS.md, .ai/VALIDATION.md, .ai/HANDOFF.md`
+- Repo state: branch `dev` (tracking `origin/dev`), working tree `clean`; HEAD is the tip of `dev` (vm-dev arm64 docs committed)
 - Source of truth: `AGENTS.md` → `.ai/`
 - Budget / usage observed: `<unknown>`
 - Checkpoint updated: `2026-09-15`
-- Last goal: Confirm the VM target (`vm-dev`) supports `arm64` and validate it end-to-end.
-- Exact next action: Validate `ubuntu-system-prepare.sh` end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI); commit the `vm-dev` arm64 documentation (uncommitted).
+- Last goal: Confirm the VM target (`vm-dev`) supports `arm64` and validate it end-to-end. Done: exit 0 on `ubuntu:24.04` arm64.
+- Exact next action: Validate `ubuntu-system-prepare.sh` end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI).
 - Blocked by: No disposable Ubuntu **amd64 desktop** target available in this session.
 - Resume prompt: `Read AGENTS.md and .ai/HANDOFF.md. Continue from the Resume block. Do not rediscover context.`
 
