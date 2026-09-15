@@ -118,3 +118,13 @@ Context: Function-level validation of the physical/`vm-dev` installers on `ubunt
 Evidence: `spotify-client` is `amd64`-only (repo has no arm64 `Packages`) and `install_virtualbox` fetches an `arch=amd64` Oracle repo, both failing on arm64; guards were added. AnyDesk 8.0.4 arm64 downloads and installs but its dpkg postinst exits 1 without systemd, and `snap install` cannot talk to snapd in the container — both are environment artifacts, not script bugs. Chrome, VS Code, and Sublime installed fine on arm64.
 Pattern / rule: Distinguish a real portability bug from a headless-container artifact before "fixing" it; guard genuinely `amd64`-only vendors (Spotify, VirtualBox) by `$ARCH`.
 Promotion: none
+
+### L-009 — The vm-dev target is arm64-ready as-is
+Date: 2026-09-15
+Status: active
+Confidence: observed
+Scope: ubuntu-system-prepare-vm-dev.sh
+Context: Checking whether the VM target supports arm64.
+Evidence: `ubuntu-system-prepare-vm-dev.sh` ran end-to-end in `ubuntu:24.04` arm64 → exit 0. Its package set has no `amd64`-only entry: Chrome and Docker use `arch=$ARCH`, TeamViewer uses `teamviewer_${ARCH}.deb` (arm64 exists), AnyDesk ships `arm64`, and X2Go/Remmina/Flameshot/Terminator are in the Ubuntu arm64 archive. Spotify and VirtualBox (both `amd64`-only, guarded) are only in the physical script.
+Pattern / rule: Keep every installer architecture-parametric (`$ARCH`) so the same entry point works on amd64 and arm64; only physical-only GUI vendors need explicit `amd64` guards.
+Promotion: none

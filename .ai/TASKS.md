@@ -2,7 +2,7 @@
 
 ## Active
 
-- End-to-end validation of `ubuntu-system-prepare.sh` and `ubuntu-system-prepare-vm-dev.sh` on a disposable Ubuntu 24.04/26.04 desktop (they need snap/flatpak/GUI; the WSL entry point already passed — see Completed).
+- End-to-end validation of `ubuntu-system-prepare.sh` on a disposable Ubuntu 24.04/26.04 **amd64** desktop (needs snap/flatpak/GUI; the WSL and `vm-dev` entry points already passed on `arm64` — see Completed).
 
 ## Planned
 
@@ -28,4 +28,5 @@
 - Ran `ubuntu-system-prepare-wsl-dev.sh` end-to-end in a disposable `ubuntu:24.04` arm64 container → exit 0 (base, git, java, python, Docker CE, kubectl 1.36.4, AWS CLI v2, zsh, passwordless sudo).
 - Validated the apt-based physical/`vm-dev` installers in `ubuntu:24.04` arm64 → pass for base, git, java, python, Docker, kubectl, AWS CLI, Chrome, VS Code, Sublime, Terminator, zsh, Flameshot, Remmina, X2Go, Flatpak. Spotify is `amd64`-only and AnyDesk's postinst needs systemd (container artifact), so both were out of scope for the container.
 - Added `arm64` guards to `install_spotify` and `install_virtualbox` (both `amd64`-only); corrected the AD claim in `README.md`.
+- Validated `ubuntu-system-prepare-vm-dev.sh` end-to-end on `ubuntu:24.04` arm64 → exit 0 (all steps pass, incl. AnyDesk/TeamViewer/X2Go on arm64).
 - Resolved pending decisions: ADR-007 (security defaults stay `1`, documented and switchable) and ADR-008 (AD/domain integration deferred).

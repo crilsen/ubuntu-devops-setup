@@ -30,3 +30,5 @@ Switchable options (set before running): `K8S_MINOR`, `APT_UPGRADE`, `ENABLE_PAS
 Ubuntu **24.04 / 26.04 LTS and derivatives**, on `amd64`/`arm64`, installing the newest available versions of each app. The scripts no longer use `apt-key`, Docker Compose v1, or the legacy `ms-teams` package; Teams is installed via **Teams for Linux**.
 
 Vendors that publish `amd64` only (Spotify, VirtualBox) are skipped with a warning on `arm64`.
+
+The `vm-dev` target is validated end-to-end on `arm64` (Ubuntu 24.04); the physical target is `amd64`-oriented because VirtualBox is not published for `arm64` Linux.

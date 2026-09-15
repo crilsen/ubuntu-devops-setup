@@ -2,13 +2,13 @@
 
 ## Resume block (read first)
 
-- Repo state: branch `dev` (tracking `origin/dev`), HEAD `6496be3`, working tree `dirty: modified ubuntu-system-prepare-common.sh, README.md, .ai/*`
+- Repo state: branch `dev` (tracking `origin/dev`), HEAD `c7c23ce`, working tree `dirty: modified README.md, .ai/TASKS.md, .ai/VALIDATION.md, .ai/HANDOFF.md`
 - Source of truth: `AGENTS.md` → `.ai/`
 - Budget / usage observed: `<unknown>`
 - Checkpoint updated: `2026-09-15`
-- Last goal: Review the physical/`vm-dev` scripts, resolve the pending TASKS decisions, and validate in a disposable container.
-- Exact next action: Validate `ubuntu-system-prepare.sh` and `ubuntu-system-prepare-vm-dev.sh` end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI), then commit the review changes (context + script guards are uncommitted).
-- Blocked by: No disposable Ubuntu **amd64 desktop** target available in this session (only a headless arm64 container; snapd needs systemd and Spotify/VirtualBox are amd64-only).
+- Last goal: Confirm the VM target (`vm-dev`) supports `arm64` and validate it end-to-end.
+- Exact next action: Validate `ubuntu-system-prepare.sh` end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI); commit the `vm-dev` arm64 documentation (uncommitted).
+- Blocked by: No disposable Ubuntu **amd64 desktop** target available in this session.
 - Resume prompt: `Read AGENTS.md and .ai/HANDOFF.md. Continue from the Resume block. Do not rediscover context.`
 
 ## Goal
@@ -65,6 +65,7 @@ The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-p
 - `bash -n` on all four scripts → Validated.
 - `shellcheck` (container) → Validated; clean.
 - `ubuntu-system-prepare-wsl-dev.sh` end-to-end in a disposable `ubuntu:24.04` arm64 container → Validated (exit 0).
+- `ubuntu-system-prepare-vm-dev.sh` end-to-end in `ubuntu:24.04` arm64 → Validated (exit 0; all steps pass, incl. AnyDesk/TeamViewer/X2Go on arm64).
 - Function-level apt installers for physical/`vm-dev` in `ubuntu:24.04` arm64 → Validated (all pass except the documented amd64-only/container-artifact cases).
 - Snap/flatpak GUI apps, TeamViewer, and VirtualBox → Not validated (see `VALIDATION.md`).
 
