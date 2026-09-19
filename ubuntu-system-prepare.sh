@@ -30,8 +30,6 @@ install_flameshot
 install_remmina
 install_teams
 install_spotify
-install_anydesk
-install_teamviewer
 install_discord
 install_virtualbox
 install_lens

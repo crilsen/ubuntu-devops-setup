@@ -26,7 +26,8 @@
 - `bash -n` passes for all four scripts.
 - Ran `shellcheck` via the `koalaman/shellcheck:stable` container; fixed the only finding (`SC1091`) with a `# shellcheck source=/dev/null` directive.
 - Ran `ubuntu-system-prepare-wsl-dev.sh` end-to-end in a disposable `ubuntu:24.04` arm64 container → exit 0 (base, git, java, python, Docker CE, kubectl 1.36.4, AWS CLI v2, zsh, passwordless sudo).
-- Validated the apt-based physical/`vm-dev` installers in `ubuntu:24.04` arm64 → pass for base, git, java, python, Docker, kubectl, AWS CLI, Chrome, VS Code, Sublime, Terminator, zsh, Flameshot, Remmina, X2Go, Flatpak. Spotify is `amd64`-only and AnyDesk's postinst needs systemd (container artifact), so both were out of scope for the container.
+- Validated the apt-based physical/`vm-dev` installers in `ubuntu:24.04` arm64 → pass for base, git, java, python, Docker, kubectl, AWS CLI, Chrome, VS Code, Sublime, Terminator, zsh, Flameshot, Remmina, X2Go, Flatpak. Spotify is `amd64`-only, so it was out of scope for the arm64 container.
 - Added `arm64` guards to `install_spotify` and `install_virtualbox` (both `amd64`-only); corrected the AD claim in `README.md`.
-- Validated `ubuntu-system-prepare-vm-dev.sh` end-to-end on `ubuntu:24.04` arm64 → exit 0 (all steps pass, incl. AnyDesk/TeamViewer/X2Go on arm64).
+- Validated `ubuntu-system-prepare-vm-dev.sh` end-to-end on `ubuntu:24.04` arm64 → exit 0 (all steps pass, incl. X2Go).
 - Resolved pending decisions: ADR-007 (security defaults stay `1`, documented and switchable) and ADR-008 (AD/domain integration deferred).
+- Removed AnyDesk and TeamViewer from the library and both entry points (ADR-009).

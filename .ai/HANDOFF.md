@@ -2,12 +2,12 @@
 
 ## Resume block (read first)
 
-- Repo state: branch `dev` (tracking `origin/dev`), working tree `clean`; HEAD is the tip of `dev` (vm-dev arm64 docs committed)
+- Repo state: branch `dev` (tracking `origin/dev`), working tree `dirty: AnyDesk/TeamViewer removal + context updates (uncommitted)`
 - Source of truth: `AGENTS.md` → `.ai/`
 - Budget / usage observed: `<unknown>`
 - Checkpoint updated: `2026-09-15`
-- Last goal: Confirm the VM target (`vm-dev`) supports `arm64` and validate it end-to-end. Done: exit 0 on `ubuntu:24.04` arm64.
-- Exact next action: Validate `ubuntu-system-prepare.sh` end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI).
+- Last goal: Remove AnyDesk and TeamViewer from the install set (ADR-009).
+- Exact next action: Commit the AnyDesk/TeamViewer removal; then validate `ubuntu-system-prepare.sh` end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI).
 - Blocked by: No disposable Ubuntu **amd64 desktop** target available in this session.
 - Resume prompt: `Read AGENTS.md and .ai/HANDOFF.md. Continue from the Resume block. Do not rediscover context.`
 
@@ -17,7 +17,7 @@ Keep an accurate, portable context for `ubuntu-devops-setup` and keep the provis
 
 ## Current State
 
-The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-prepare-wsl-dev.sh` runs end-to-end (exit 0) in a disposable `ubuntu:24.04` arm64 container. The physical and `vm-dev` entry points are still unvalidated (they need snap/flatpak/GUI). Nothing is committed yet.
+The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-prepare-wsl-dev.sh` and `ubuntu-system-prepare-vm-dev.sh` run end-to-end (exit 0) in a disposable `ubuntu:24.04` arm64 container. The physical entry point is still unvalidated end-to-end (needs snap/flatpak/GUI). AnyDesk and TeamViewer were removed (ADR-009).
 
 ## What Was Done
 
@@ -34,6 +34,7 @@ The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-p
 - Reviewed the physical/`vm-dev` installers and validated every apt-based one at function level in `ubuntu:24.04` arm64 (Chrome, VS Code, Sublime, Terminator, zsh, Flameshot, Remmina, X2Go, Flatpak all pass).
 - Fixed the arm64 bugs found: `install_spotify` and `install_virtualbox` now skip on non-`amd64`; corrected the overstated AD claim in `README.md`.
 - Resolved the pending decisions as ADR-007 (security defaults stay `1`, documented) and ADR-008 (AD/domain integration deferred).
+- Removed AnyDesk and TeamViewer from the shared library and from `ubuntu-system-prepare.sh`/`ubuntu-system-prepare-vm-dev.sh` (ADR-009).
 
 ## Files Changed
 
@@ -50,27 +51,29 @@ The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-p
 - ADR-006: drop Skype, `aws-iam-authenticator`, the legacy `ms-teams` repo, and the system PyDrive install.
 - ADR-007 (Accepted): keep `ENABLE_PASSWORDLESS_SUDO`/`DISABLE_UFW`/`DISABLE_CUPS` at `1`, documented and switchable.
 - ADR-008 (Accepted): defer AD/domain-controller integration; correct the `README.md` claim.
+- ADR-009 (Accepted): remove `install_anydesk`/`install_teamviewer` (unused; X2Go/Remmina cover remote access).
 
 ## Problems / Risks
 
-- Physical and `vm-dev` scripts are unvalidated end-to-end; they need an `amd64` desktop target with snap/flatpak/GUI. Running any script mutates a host (packages, `/etc/sudoers.d`, services).
+- The physical script is unvalidated end-to-end; it needs an `amd64` desktop target with snap/flatpak/GUI. Running any script mutates a host (packages, `/etc/sudoers.d`, services).
 - `ENABLE_PASSWORDLESS_SUDO=1`, `DISABLE_UFW=1`, `DISABLE_CUPS=1` carry security impact and are on by default for behavior parity (ADR-007).
 - Spotify (amd64-only) and VirtualBox (amd64-only) are skipped on arm64; a full `amd64` verification run is still pending.
 - `K8S_MINOR` defaults to `v1.36` (`kubectl` 1.36.4 verified) and may lag the latest release.
 - PyDrive was removed; no Google Drive client is installed now (use `pipx`/`rclone`).
-- Review changes (script guards + context) are uncommitted; commit and push before any agent or machine switch (L-002).
+- AnyDesk and TeamViewer were removed; remote desktop is X2Go (VM) with Remmina as client.
+- The AnyDesk/TeamViewer removal is uncommitted; commit and push before any agent or machine switch (L-002).
 
 ## Validation Performed
 
 - `bash -n` on all four scripts → Validated.
 - `shellcheck` (container) → Validated; clean.
 - `ubuntu-system-prepare-wsl-dev.sh` end-to-end in a disposable `ubuntu:24.04` arm64 container → Validated (exit 0).
-- `ubuntu-system-prepare-vm-dev.sh` end-to-end in `ubuntu:24.04` arm64 → Validated (exit 0; all steps pass, incl. AnyDesk/TeamViewer/X2Go on arm64).
-- Function-level apt installers for physical/`vm-dev` in `ubuntu:24.04` arm64 → Validated (all pass except the documented amd64-only/container-artifact cases).
-- Snap/flatpak GUI apps, TeamViewer, and VirtualBox → Not validated (see `VALIDATION.md`).
+- `ubuntu-system-prepare-vm-dev.sh` end-to-end in `ubuntu:24.04` arm64 → Validated (exit 0, before AnyDesk/TeamViewer removal).
+- Function-level apt installers for physical/`vm-dev` in `ubuntu:24.04` arm64 → Validated (all pass except the documented amd64-only cases).
+- Snap/flatpak GUI apps and VirtualBox → Not validated (see `VALIDATION.md`).
 
 ## Next Actions
 
-- Validate physical/`vm-dev` end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop.
-- Commit and push this review (guards + context).
+- Commit the AnyDesk/TeamViewer removal and re-check `bash -n`/`shellcheck`.
+- Validate the physical script end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop.
 - Decide whether to install a Google Drive client by default; revisit `K8S_MINOR`.

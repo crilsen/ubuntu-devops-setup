@@ -142,6 +142,23 @@ Consequences:
 - The repository no longer overclaims AD support.
 - Future AD support should be an opt-in installer with its own validation.
 
+## ADR-009 — Drop AnyDesk and TeamViewer from the install set
+
+Status: Accepted
+
+Context:
+AnyDesk and TeamViewer were installed on the physical and `vm-dev` targets as remote-desktop tools, overlapping with `x2goserver` (VM) and Remmina. The owner stated they are not needed.
+
+Decision:
+Remove `install_anydesk` and `install_teamviewer` from the shared library and stop calling them from `ubuntu-system-prepare.sh` and `ubuntu-system-prepare-vm-dev.sh`. Remote access on the VM stays via X2Go, with Remmina as a client.
+
+Reasoning:
+Unused remote-desktop clients add a proprietary third-party apt repo (AnyDesk) and a downloaded vendor `.deb` (TeamViewer), plus background daemons and attack surface, for no benefit in the owner's environments.
+
+Consequences:
+- Fewer third-party apt repos and vendor downloads.
+- Anyone who still wants AnyDesk or TeamViewer must install them manually; the scripts no longer provide them.
+
 Use this ADR format for durable, meaningful decisions:
 
 ```text

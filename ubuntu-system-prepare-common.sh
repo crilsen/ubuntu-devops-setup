@@ -221,23 +221,6 @@ install_spotify() {
   apt_install spotify-client
 }
 
-install_anydesk() {
-  log "AnyDesk"
-  add_apt_repo anydesk https://keys.anydesk.com/repos/DEB-GPG-KEY \
-    "deb [signed-by=@KEY@] http://deb.anydesk.com/ all main"
-  apt_update
-  apt_install anydesk
-}
-
-install_teamviewer() {
-  log "TeamViewer"
-  local tmp
-  tmp="$(mktemp -d)"
-  curl -fsSL "https://download.teamviewer.com/download/linux/teamviewer_${ARCH}.deb" -o "$tmp/teamviewer.deb"
-  apt_install "$tmp/teamviewer.deb"
-  rm -rf "$tmp"
-}
-
 install_discord() {
   log "Discord"
   flatpak_install com.discordapp.Discord

@@ -28,8 +28,6 @@ install_terminator
 install_zsh
 install_flameshot
 install_remmina
-install_anydesk
-install_teamviewer
 install_x2go
 
 configure_passwordless_sudo
