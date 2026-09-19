@@ -13,7 +13,7 @@ Derived from the scripts as they exist today.
 - **Idempotency:** `snap_install` guards with `snap list`; `add_bashrc_block` guards with `>>> tag >>>` markers; the docker group is checked before `usermod`; `add_apt_repo` keeps an existing key.
 - **Downloads:** vendor files go to `mktemp -d` and are removed afterwards.
 - **Comments:** terse, one section label per step (for example `# docker`).
-- **Naming:** lowercase, hyphenated; target suffixes `vm-dev` and `wsl-dev`, no suffix means physical.
+- **Naming:** lowercase, hyphenated; target suffixes `baremetal` (physical machine), `vm-dev`, and `wsl-dev`.
 
 ## Recommended conventions
 

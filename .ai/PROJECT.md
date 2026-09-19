@@ -10,7 +10,7 @@
 ## Observed
 
 - Three bash scripts exist and are the whole repository (plus `README.md`):
-  - `ubuntu-system-prepare.sh` — physical machine (fullest set, includes GUI and communication apps, sudoers and service tuning).
+  - `ubuntu-system-prepare-baremetal.sh` — bare-metal machine (fullest set, includes GUI and communication apps, sudoers and service tuning).
   - `ubuntu-system-prepare-vm-dev.sh` — VM used for development (adds `x2go` remote desktop; no Teams/Skype/Spotify/VirtualBox).
   - `ubuntu-system-prepare-wsl-dev.sh` — WSL2 development environment (smallest set: no flatpak/terminator/GUI-only tooling).
 - All scripts start with `cd /tmp`, install via `apt`/`apt-get`/`snap`/`flatpak`, mix `sudo` and bare commands, and end with `apt update && apt upgrade`.

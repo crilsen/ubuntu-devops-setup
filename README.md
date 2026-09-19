@@ -6,7 +6,7 @@ Scripts to prepare an Ubuntu machine with the common software a developer, DevOp
 
 | Script | Target |
 | --- | --- |
-| `ubuntu-system-prepare.sh` | Physical machine (baseline + GUI, communication and remote-desktop apps) |
+| `ubuntu-system-prepare-baremetal.sh` | Bare metal (baseline + GUI, communication and remote-desktop apps) |
 | `ubuntu-system-prepare-vm-dev.sh` | Development VM (baseline + `x2go` and remote-desktop tools) |
 | `ubuntu-system-prepare-wsl-dev.sh` | WSL2 development environment (minimum baseline) |
 | `ubuntu-system-prepare-common.sh` | Shared library sourced by the scripts above |
@@ -18,7 +18,7 @@ Run the script matching your environment on a fresh Ubuntu installation, with `s
 ```bash
 export gituser="Your Name"
 export gitemail="you@example.com"
-sudo -E ./ubuntu-system-prepare.sh
+sudo -E ./ubuntu-system-prepare-baremetal.sh
 ```
 
 The scripts are idempotent and can be re-run. They install packages, add third-party apt repositories (keyring `signed-by`), edit `/etc/sudoers.d/`, and by default disable `cups` and `ufw`. Review them first and run them only on a machine you can rebuild.

@@ -2,7 +2,7 @@
 
 ## Active
 
-- End-to-end validation of `ubuntu-system-prepare.sh` on a disposable Ubuntu 24.04/26.04 **amd64** desktop (needs snap/flatpak/GUI; the WSL and `vm-dev` entry points already passed on `arm64` — see Completed).
+- End-to-end validation of `ubuntu-system-prepare-baremetal.sh` on a disposable Ubuntu 24.04/26.04 **amd64** desktop (needs snap/flatpak/GUI; the WSL and `vm-dev` entry points already passed on `arm64` — see Completed).
 
 ## Planned
 
@@ -31,3 +31,4 @@
 - Validated `ubuntu-system-prepare-vm-dev.sh` end-to-end on `ubuntu:24.04` arm64 → exit 0 (all steps pass, incl. X2Go).
 - Resolved pending decisions: ADR-007 (security defaults stay `1`, documented and switchable) and ADR-008 (AD/domain integration deferred).
 - Removed AnyDesk and TeamViewer from the library and both entry points (ADR-009).
+- Renamed the physical entry point to `ubuntu-system-prepare-baremetal.sh` (ADR-010).
