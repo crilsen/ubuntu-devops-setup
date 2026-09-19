@@ -2,12 +2,12 @@
 
 ## Resume block (read first)
 
-- Repo state: branch `dev` (tracking `origin/dev`), working tree `dirty: AnyDesk/TeamViewer removal + context updates (uncommitted)`
+- Repo state: branch `dev` (tracking `origin/dev`), working tree `clean`; `main` merged via PR #1 (`e57092d`) and carries the same content
 - Source of truth: `AGENTS.md` → `.ai/`
 - Budget / usage observed: `<unknown>`
 - Checkpoint updated: `2026-09-15`
-- Last goal: Remove AnyDesk and TeamViewer from the install set (ADR-009).
-- Exact next action: Commit the AnyDesk/TeamViewer removal; then validate `ubuntu-system-prepare.sh` end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI).
+- Last goal: Remove AnyDesk and TeamViewer (ADR-009) and merge the full modernization into `main` (PR #1). Done.
+- Exact next action: Validate `ubuntu-system-prepare.sh` (physical/bare metal) end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI).
 - Blocked by: No disposable Ubuntu **amd64 desktop** target available in this session.
 - Resume prompt: `Read AGENTS.md and .ai/HANDOFF.md. Continue from the Resume block. Do not rediscover context.`
 
@@ -61,7 +61,7 @@ The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-p
 - `K8S_MINOR` defaults to `v1.36` (`kubectl` 1.36.4 verified) and may lag the latest release.
 - PyDrive was removed; no Google Drive client is installed now (use `pipx`/`rclone`).
 - AnyDesk and TeamViewer were removed; remote desktop is X2Go (VM) with Remmina as client.
-- The AnyDesk/TeamViewer removal is uncommitted; commit and push before any agent or machine switch (L-002).
+- All work is committed, pushed, and merged to `main` (PR #1); nothing is uncommitted.
 
 ## Validation Performed
 
@@ -74,6 +74,5 @@ The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-p
 
 ## Next Actions
 
-- Commit the AnyDesk/TeamViewer removal and re-check `bash -n`/`shellcheck`.
-- Validate the physical script end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop.
+- Validate the physical/bare-metal script end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop.
 - Decide whether to install a Google Drive client by default; revisit `K8S_MINOR`.
