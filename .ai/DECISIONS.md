@@ -159,6 +159,23 @@ Consequences:
 - Fewer third-party apt repos and vendor downloads.
 - Anyone who still wants AnyDesk or TeamViewer must install them manually; the scripts no longer provide them.
 
+## ADR-010 — Rename the physical entry point to ubuntu-system-prepare-baremetal.sh
+
+Status: Accepted
+
+Context:
+The physical entry point was `ubuntu-system-prepare.sh`, where the target was implied by the absence of a suffix (`-vm-dev`, `-wsl-dev`). The owner renamed it to `ubuntu-system-prepare-baremetal.sh` for an explicit, self-describing target name.
+
+Decision:
+Rename the entry point to `ubuntu-system-prepare-baremetal.sh` and update `README.md`, `PROJECT.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`, `TASKS.md`, and `HANDOFF.md`. The shared library name (`ubuntu-system-prepare-common.sh`) is unchanged.
+
+Reasoning:
+An explicit suffix makes the target obvious and consistent with `-vm-dev` and `-wsl-dev`, removing the "no suffix means physical" special case.
+
+Consequences:
+- All references use the new name; the old name no longer exists.
+- Naming convention: every entry point carries an explicit target suffix.
+
 Use this ADR format for durable, meaningful decisions:
 
 ```text

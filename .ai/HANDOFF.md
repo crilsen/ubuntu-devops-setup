@@ -7,7 +7,7 @@
 - Budget / usage observed: `<unknown>`
 - Checkpoint updated: `2026-09-15`
 - Last goal: Remove AnyDesk and TeamViewer (ADR-009) and merge the full modernization into `main` (PR #1). Done.
-- Exact next action: Validate `ubuntu-system-prepare.sh` (physical/bare metal) end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI).
+- Exact next action: Validate `ubuntu-system-prepare-baremetal.sh` (bare metal) end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI).
 - Blocked by: No disposable Ubuntu **amd64 desktop** target available in this session.
 - Resume prompt: `Read AGENTS.md and .ai/HANDOFF.md. Continue from the Resume block. Do not rediscover context.`
 
@@ -21,7 +21,7 @@ The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-p
 
 ## What Was Done
 
-- Rewrote `ubuntu-system-prepare.sh`, `ubuntu-system-prepare-vm-dev.sh`, and `ubuntu-system-prepare-wsl-dev.sh` as thin entry points.
+- Rewrote `ubuntu-system-prepare-baremetal.sh`, `ubuntu-system-prepare-vm-dev.sh`, and `ubuntu-system-prepare-wsl-dev.sh` as thin entry points.
 - Added `ubuntu-system-prepare-common.sh` with detected context, safe/idempotent helpers, and one installer per tool.
 - Fixed the syntax error (stray sudoers line), `puthon3`, `java-default`, and `aws-iam-authenticatorku`.
 - Replaced `apt-key` with keyring `signed-by`; Docker Compose v2; `kubectl` from `pkgs.k8s.io`; arch-aware AWS CLI.
@@ -34,11 +34,12 @@ The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-p
 - Reviewed the physical/`vm-dev` installers and validated every apt-based one at function level in `ubuntu:24.04` arm64 (Chrome, VS Code, Sublime, Terminator, zsh, Flameshot, Remmina, X2Go, Flatpak all pass).
 - Fixed the arm64 bugs found: `install_spotify` and `install_virtualbox` now skip on non-`amd64`; corrected the overstated AD claim in `README.md`.
 - Resolved the pending decisions as ADR-007 (security defaults stay `1`, documented) and ADR-008 (AD/domain integration deferred).
-- Removed AnyDesk and TeamViewer from the shared library and from `ubuntu-system-prepare.sh`/`ubuntu-system-prepare-vm-dev.sh` (ADR-009).
+- Removed AnyDesk and TeamViewer from the shared library and from `ubuntu-system-prepare-baremetal.sh`/`ubuntu-system-prepare-vm-dev.sh` (ADR-009).
+- Renamed the physical entry point to `ubuntu-system-prepare-baremetal.sh` (ADR-010).
 
 ## Files Changed
 
-- `ubuntu-system-prepare.sh`, `ubuntu-system-prepare-vm-dev.sh`, `ubuntu-system-prepare-wsl-dev.sh`
+- `ubuntu-system-prepare-baremetal.sh`, `ubuntu-system-prepare-vm-dev.sh`, `ubuntu-system-prepare-wsl-dev.sh`
 - `ubuntu-system-prepare-common.sh` (new)
 - `README.md`
 - `.ai/PROJECT.md`, `.ai/ARCHITECTURE.md`, `.ai/CONVENTIONS.md`, `.ai/DECISIONS.md`

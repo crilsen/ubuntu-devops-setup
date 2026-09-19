@@ -8,7 +8,7 @@ The repository is a set of Bash provisioning scripts for Ubuntu, one entry point
 
 | Component | Target | Notes |
 | --- | --- | --- |
-| `ubuntu-system-prepare.sh` | Physical machine | Fullest set, including GUI, communication and remote-desktop apps |
+| `ubuntu-system-prepare-baremetal.sh` | Bare metal | Fullest set, including GUI, communication and remote-desktop apps |
 | `ubuntu-system-prepare-vm-dev.sh` | VM, development | Baseline plus `x2go`, remote-desktop and screenshot tools |
 | `ubuntu-system-prepare-wsl-dev.sh` | WSL2, development | Minimum set, no GUI apps: shell, Git, Docker, Kubernetes, AWS |
 | `ubuntu-system-prepare-common.sh` | Shared library | Sourced by the three entry points; no execution on its own |

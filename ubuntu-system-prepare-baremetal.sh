@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Ubuntu system prepare - physical machine.
+# Ubuntu system prepare - bare-metal machine.
 # Targets Ubuntu 24.04 / 26.04 LTS and derivatives.
 
 set -euo pipefail
