@@ -190,8 +190,289 @@ install_terminator() {
 }
 
 install_zsh() {
-  log "Zsh"
-  apt_install zsh
+  log "Zsh + Oh My Zsh + Powerlevel10k"
+  apt_install zsh git curl
+
+  local zsh_dir="${TARGET_HOME}/.oh-my-zsh"
+  local p10k_dir="${zsh_dir}/custom/themes/powerlevel10k"
+
+  # Oh My Zsh
+  if [[ ! -d "$zsh_dir" ]]; then
+    sudo -u "$TARGET_USER" sh -c \
+      "RUNZSH=no KEEP_ZSHRC=yes sh -c \"\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\""
+  fi
+
+  # Powerlevel10k
+  if [[ ! -d "$p10k_dir" ]]; then
+    sudo -u "$TARGET_USER" git clone --depth=1 \
+      https://github.com/romkatv/powerlevel10k.git "$p10k_dir"
+  fi
+
+  # External plugins (zsh-users)
+  local custom_plugins="${zsh_dir}/custom/plugins"
+  sudo -u "$TARGET_USER" mkdir -p "$custom_plugins"
+  for _plug in zsh-autosuggestions zsh-completions zsh-syntax-highlighting; do
+    if [[ ! -d "${custom_plugins}/${_plug}" ]]; then
+      sudo -u "$TARGET_USER" git clone --depth=1 \
+        "https://github.com/zsh-users/${_plug}.git" "${custom_plugins}/${_plug}" 2>/dev/null || true
+    fi
+  done
+
+  # .zshrc — Ubuntu-themed Powerlevel10k prompt
+  local zshrc="${TARGET_HOME}/.zshrc"
+  sudo -u "$TARGET_USER" tee "$zshrc" >/dev/null <<'ZSHRC'
+# Enable Powerlevel10k instant prompt (should stay at top)
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+plugins=(
+  # ── Core ─────────────────────────────────────────────────────────
+  git
+  command-not-found
+  colored-man-pages
+  history
+  sudo              # press Esc Esc to toggle sudo on last command
+  dirhistory         # Alt+Arrow for directory navigation
+  copypath           # copy current path to clipboard
+  copyfile           # copy file contents to clipboard
+
+  # ── Languages ───────────────────────────────────────────────────
+  python
+  pip
+  golang
+  rust
+  node
+  npm
+
+  # ── Containers & Orchestration ──────────────────────────────────
+  docker
+  docker-compose
+  kubectl
+  kubectx            # fast context/namespace switching (kubectx/kubens)
+  helm
+  helmfile
+  helm-diff
+  flux
+  minikube
+  skaffold
+  tilt
+
+  # ── IaC & Provisioning ─────────────────────────────────────────
+  terraform
+  terraform-docs
+  ansible
+
+  # ── Cloud CLIs ──────────────────────────────────────────────────
+  aws
+  gcloud
+
+  # ── Extra completions & suggestions ─────────────────────────────
+  zsh-completions
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+
+# Fallback: only source oh-my-zsh if the theme is present
+source $ZSH/oh-my-zsh.sh
+
+# ── Autosuggestions config ──────────────────────────────────────────────
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#586069"
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+# ── Completions ─────────────────────────────────────────────────────────
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' squeeze-slashes true
+
+# ── History ─────────────────────────────────────────────────────────────
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_FIND_NO_DUPS
+setopt SHARE_HISTORY
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+
+# ── DevOps aliases ──────────────────────────────────────────────────────
+alias k='kubectl'
+alias kgp='kubectl get pods'
+alias kgs='kubectl get svc'
+alias kgd='kubectl get deploy'
+alias kgn='kubectl get nodes'
+alias kl='kubectl logs -f'
+alias kex='kubectl exec -it'
+alias kaf='kubectl apply -f'
+alias kdf='kubectl delete -f'
+alias kctx='kubectx'
+alias kns='kubens'
+
+alias dc='docker compose'
+alias dcup='docker compose up -d'
+alias dcdown='docker compose down'
+alias dcps='docker compose ps'
+alias dcl='docker compose logs -f'
+alias dcbuild='docker compose build'
+alias dcpull='docker compose pull'
+
+alias tf='terraform'
+alias tfi='terraform init'
+alias tfp='terraform plan'
+alias tfa='terraform apply'
+alias tfd='terraform destroy'
+alias tfs='terraform state list'
+alias tfsh='terraform show'
+
+alias helmup='helm repo update'
+alias helmls='helm list -A'
+alias helmig='helm install'
+alias helmug='helm upgrade'
+alias helmun='helm uninstall'
+
+alias ans='ansible'
+alias anp='ansible-playbook'
+
+alias gp='git push'
+alias gl='git pull'
+alias gst='git status'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias gcm='git commit -m'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias ga='git add'
+alias gaa='git add -A'
+alias lg='lazygit'
+
+# ── Misc ────────────────────────────────────────────────────────────────
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ll='ls -lah --color=auto'
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ports='ss -tulanp'
+alias myip='curl -s ifconfig.me'
+alias localip='hostname -I | awk '"'"'{print $1}'"'"'
+
+# ── Powerlevel10k config ──────────────────────────────────────────────
+() {
+  emulate -L zsh
+  setopt no_unset
+  (( ${+parameters[POWERLEVEL9K_INSTANT_PROMPT]} )) || POWERLEVEL9K_INSTANT_PROMPT=quiet
+
+  [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+  [[ -f ~/.p10k.zsh ]] && return
+
+  (( ${+functions[p10k]} )) || source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerlevel10k.zsh-theme"
+  (( ${+functions[p10k]} )) || return
+
+  # ── Prompt style ───────────────────────────────────────────────────
+  typeset -g POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+  typeset -g POWERLEVEL9K_PROMPT_ADD_NEWLINE=false
+  typeset -g POWERLEVEL9K_RPROMPT_ON_NEWLINE=false
+
+  # ── Separators (clean thin lines) ──────────────────────────────────
+  typeset -g POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR=''
+  typeset -g POWERLEVEL9K_LEFT_SUBSEGMENT_SEPARATOR=' '
+  typeset -g POWERLEVEL9K_RIGHT_SEGMENT_SEPARATOR=''
+  typeset -g POWERLEVEL9K_RIGHT_SUBSEGMENT_SEPARATOR=' '
+
+  typeset -g POWERLEVEL9K_LEFT_PROMPT_LAST_SEGMENT_END_SYMBOL=''
+  typeset -g POWERLEVEL9K_LEFT_PROMPT_FIRST_SEGMENT_START_SYMBOL=''
+
+  # ── Prompt elements ────────────────────────────────────────────────
+  typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
+    os_icon                 # Ubuntu symbol
+    dir                     # current directory
+    vcs                     # git status
+    prompt_char             # prompt symbol
+  )
+
+  typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+    status                  # exit code of last command
+    command_execution_time  # duration of last command
+    background_jobs         # presence of background jobs
+    virtualenv              # python virtual environment
+    kubecontext             # kubernetes context
+    aws                     # aws profile
+    docker_context          # docker context
+    nvm                     # node version
+    node_version            # node version
+    go_version              # go version
+    rust_version            # rust version
+    php_version             # php version
+    context                 # user@host
+  )
+
+  # ── Ubuntu symbol ──────────────────────────────────────────────────
+  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=249
+  typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION=' %BNICE%b'
+
+  # ── Directory ──────────────────────────────────────────────────────
+  typeset -g POWERLEVEL9K_DIR_FOREGROUND=31
+  typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_last
+  typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
+  typeset -g POWERLEVEL9K_DIR_SHOW_WRITABLE=true
+  typeset -g POWERLEVEL9K_DIR_NOT_WRITABLE_FOREGROUND=1
+
+  # ── VCS (git) ──────────────────────────────────────────────────────
+  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=76
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=248
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=76
+  typeset -g POWERLEVEL9K_VCS_LOADING_FOREGROUND=248
+  typeset -g POWERLEVEL9K_VCS_BRANCH_ICON=' '
+  typeset -g POWERLEVEL9K_VCS_{STAGED,UNSTAGED,UNTRACKED,CONFLICTED,COMMITS_AHEAD,COMMITS_BEHIND}_MAX_NUM=-1
+
+  # ── Prompt char ────────────────────────────────────────────────────
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=76
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=196
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION=' ❯'
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VICMD_CONTENT_EXPANSION=' ❮'
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIVIS_CONTENT_EXPANSION=' V'
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIOWR_CONTENT_EXPANSION=' ▶'
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_OVERWRITE_STATE=true
+
+  # ── Status / execution time / background jobs ──────────────────────
+  typeset -g POWERLEVEL9K_STATUS_EXTENDED_STATES=true
+  typeset -g POWERLEVEL9K_STATUS_OK=false
+  typeset -g POWERLEVEL9K_STATUS_OK_PIPE=true
+  typeset -g POWERLEVEL9K_STATUS_ERROR=true
+  typeset -g POWERLEVEL9K_STATUS_ERROR_SIGNAL=true
+  typeset -g POWERLEVEL9K_STATUS_ERROR_FOREGROUND=196
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_THRESHOLD=3
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=101
+  typeset -g POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND=70
+
+  # ── Context (user@host) ────────────────────────────────────────────
+  typeset -g POWERLEVEL9K_CONTEXT_FOREGROUND=248
+  typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_CONTENT_EXPANSION='%BNICE%b'
+
+  # ── Segment icons ──────────────────────────────────────────────────
+  typeset -g POWERLEVEL9K_VCS_BRANCH_ICON=''
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_ICON='?'
+
+  (( ${+functions[p10k]} )) && p10k reload
+}
+
+# Tell p10k this file has been sourced (so it doesn't show the config wizard again)
+[[ ! -f ~/.p10k.zsh ]] && (( ${+functions[p10k]} )) && p10k reload
+# ── End Powerlevel10k config ──────────────────────────────────────────
+ZSHRC
+
+  # Set default shell to zsh
+  chsh -s "$(which zsh)" "$TARGET_USER" 2>/dev/null || \
+    warn "Could not change default shell to zsh for $TARGET_USER; run 'chsh -s \$(which zsh)' manually."
 }
 
 install_flameshot() {
