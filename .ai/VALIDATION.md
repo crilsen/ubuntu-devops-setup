@@ -43,3 +43,10 @@ The project is Bash scripts with no build, test suite, or CI. Run these before c
 - `gituser` / `gitemail` are optionally set before running.
 - Third-party repos and vendor URLs publish packages for the target release; `install_virtualbox` falls back to the Ubuntu package where Oracle has no repo.
 - Defaults `ENABLE_PASSWORDLESS_SUDO=1`, `DISABLE_UFW=1`, `DISABLE_CUPS=1` alter host security; confirm before running on a managed machine.
+
+## Zsh automation (2026-09-27)
+
+- **Validated:** `bash -n` on all entry scripts/library, `zsh -n assets/devops.zsh`, PowerShell Parser API on the Windows helper, fontconfig XML parsing, `git diff --check`.
+- **Validated:** isolated target home, two `install_zsh` calls with package/user/Windows mutations stubbed; existing `.zshrc` and one backup preserved, loader not duplicated. Real Zsh startup with locally installed plugins passed suggestions/highlighting, kubectl completion and Git branch checks.
+- **Not validated:** ShellCheck (unavailable); full new installer run on a fresh host; execution of the new generalized Windows helper (only syntax checked). The prior local Windows font setup succeeded, but does not replace end-to-end validation of this helper.
+- Container recipes must copy `assets/` alongside `*.sh` before executing the entry point.

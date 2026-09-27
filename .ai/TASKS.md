@@ -16,6 +16,8 @@
 
 ## Completed
 
+- Automated Zsh for all targets (2026-09-27): managed configuration, completion/suggestions/highlighting, Ubuntu/Git prompt, default shell, Nerd Font and WSL Windows Terminal font setup. Validated syntax and isolated repeat installation; full fresh-host run pending.
+
 - Adopted the portable agent-context template with observed facts.
 - Modernized all scripts per ADR-004/ADR-005/ADR-006:
   - Fixed the `ubuntu-system-prepare.sh` syntax error and the `puthon3`/`java-default`/`aws-iam-authenticatorku` bugs.

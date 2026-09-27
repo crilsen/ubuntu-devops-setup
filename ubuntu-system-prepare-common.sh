@@ -10,6 +10,9 @@ ARCH="$(dpkg --print-architecture)"
 # shellcheck source=/dev/null
 CODENAME="$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")"
 KEYRINGS_DIR=/etc/apt/keyrings
+SETUP_ASSETS_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/assets"
+NERD_FONT_REF="${NERD_FONT_REF:-master}"
+CONFIGURE_WINDOWS_TERMINAL="${CONFIGURE_WINDOWS_TERMINAL:-1}"
 
 K8S_MINOR="${K8S_MINOR:-v1.36}"
 APT_UPGRADE="${APT_UPGRADE:-1}"
@@ -190,8 +193,62 @@ install_terminator() {
 }
 
 install_zsh() {
-  log "Zsh"
-  apt_install zsh
+  log "Zsh, completion, suggestions and Ubuntu/Git prompt"
+  apt_install zsh zsh-autosuggestions zsh-syntax-highlighting fontconfig
+  local config_dir="$TARGET_HOME/.config/zsh" font_dir="$TARGET_HOME/.local/share/fonts"
+  local rc="$TARGET_HOME/.zshrc" loader='source ~/.config/zsh/devops.zsh'
+  local font="JetBrainsMonoNerdFontMono-Regular.ttf" tmp
+  install -d -o "$TARGET_USER" -g "$(id -gn "$TARGET_USER")" "$config_dir" "$font_dir"
+  install -m 0644 -o "$TARGET_USER" "$SETUP_ASSETS_DIR/devops.zsh" "$config_dir/devops.zsh"
+  if [[ ! -f "$rc" ]] || ! grep -qxF "$loader" "$rc"; then
+    [[ ! -e "$rc" ]] || cp -a -- "$rc" "$rc.backup-$(date +%Y%m%d-%H%M%S-%N)"
+    printf '\n# Ubuntu DevOps shell configuration\n%s\n' "$loader" >> "$rc"
+    chown "$TARGET_USER:$(id -gn "$TARGET_USER")" "$rc"
+  fi
+  if [[ ! -s "$font_dir/$font" ]]; then
+    tmp="$(mktemp -d)"
+    curl -fsSL "https://raw.githubusercontent.com/ryanoasis/nerd-fonts/$NERD_FONT_REF/patched-fonts/JetBrainsMono/Ligatures/$font" -o "$tmp/$font"
+    install -m 0644 -o "$TARGET_USER" "$tmp/$font" "$font_dir/$font"
+    rm -rf "$tmp"
+  fi
+  as_user "$TARGET_USER" fc-cache -f "$font_dir"
+  as_user "$TARGET_USER" zsh -n "$config_dir/devops.zsh"
+  if [[ "$(getent passwd "$TARGET_USER" | cut -d: -f7)" != /usr/bin/zsh ]]; then
+    chsh -s /usr/bin/zsh "$TARGET_USER"
+  fi
+  if grep -qi microsoft /proc/sys/kernel/osrelease; then
+    configure_windows_terminal "$font_dir/$font"
+  else
+    # Fontconfig supplies the Nerd Font to terminals using the monospace alias.
+    install -d -o "$TARGET_USER" "$TARGET_HOME/.config/fontconfig/conf.d"
+    install -m 0644 -o "$TARGET_USER" "$SETUP_ASSETS_DIR/99-devops-monospace.conf" \
+      "$TARGET_HOME/.config/fontconfig/conf.d/99-devops-monospace.conf"
+    as_user "$TARGET_USER" fc-cache -f
+    log "Font installed; terminals with an explicit font must select JetBrainsMono Nerd Font Mono."
+  fi
+  log "Zsh ready. Close and reopen your terminal."
+}
+
+configure_windows_terminal() {
+  [[ "$CONFIGURE_WINDOWS_TERMINAL" == 1 ]] || return 0
+  local powershell font_path script_path distro root_path
+  powershell="$(command -v powershell.exe || true)"
+  if [[ -z "$powershell" && -x /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe ]]; then
+    powershell=/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe
+  fi
+  if [[ -z "$powershell" ]] || ! command -v wslpath >/dev/null; then
+    warn "Windows interop unavailable; select a Nerd Font in your host terminal manually."
+    return 0
+  fi
+  font_path="$(wslpath -w "$1")"
+  script_path="$(wslpath -w "$SETUP_ASSETS_DIR/configure-windows-terminal.ps1")"
+  root_path="$(wslpath -w /)"
+  distro="${root_path%\\}"
+  distro="${distro##*\\}"
+  if ! "$powershell" -NoProfile -ExecutionPolicy Bypass -File "$script_path" \
+    -FontPath "$font_path" -DistroName "$distro"; then
+    warn "Windows font/terminal configuration failed; see the PowerShell error above. Linux Zsh is configured."
+  fi
 }
 
 install_flameshot() {

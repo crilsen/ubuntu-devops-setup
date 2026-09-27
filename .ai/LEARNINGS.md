@@ -128,3 +128,13 @@ Context: Checking whether the VM target supports arm64.
 Evidence: `ubuntu-system-prepare-vm-dev.sh` ran end-to-end in `ubuntu:24.04` arm64 → exit 0. Its package set has no `amd64`-only entry: Chrome and Docker use `arch=$ARCH`, TeamViewer uses `teamviewer_${ARCH}.deb` (arm64 exists), AnyDesk ships `arm64`, and X2Go/Remmina/Flameshot/Terminator are in the Ubuntu arm64 archive. Spotify and VirtualBox (both `amd64`-only, guarded) are only in the physical script.
 Pattern / rule: Keep every installer architecture-parametric (`$ARCH`) so the same entry point works on amd64 and arm64; only physical-only GUI vendors need explicit `amd64` guards.
 Promotion: none
+
+### L-010 — WSL prompt icons require a host terminal font
+Date: 2026-09-27
+Status: active
+Confidence: observed
+Scope: Zsh / Windows Terminal
+Context: Reproducing the user's configured Ubuntu icon automatically.
+Evidence: The local WSL setup registered JetBrainsMono Nerd Font Mono in Windows HKCU, loaded it with AddFontResourceW (result 1), and selected it on the Ubuntu Windows Terminal profile.
+Pattern / rule: Installing a font inside Linux does not configure the Windows terminal renderer; install/register the Windows user font and select it on the matching profile, preserving other settings and a backup.
+Promotion: none

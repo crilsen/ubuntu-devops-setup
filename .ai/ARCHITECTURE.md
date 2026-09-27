@@ -13,6 +13,8 @@ The repository is a set of Bash provisioning scripts for Ubuntu, one entry point
 | `ubuntu-system-prepare-wsl-dev.sh` | WSL2, development | Minimum set, no GUI apps: shell, Git, Docker, Kubernetes, AWS |
 | `ubuntu-system-prepare-common.sh` | Shared library | Sourced by the three entry points; no execution on its own |
 
+The shared Zsh installer also deploys `assets/devops.zsh`, installs Ubuntu Zsh plugins and a Nerd Font, and sets the target user’s login shell. `assets/configure-windows-terminal.ps1` handles the Windows user font and matching WSL terminal profile; `assets/99-devops-monospace.conf` provides the Linux monospace preference. Keep assets alongside the entry scripts.
+
 ## Execution model (observed)
 
 1. `require_root` and `cd /tmp`; the scripts expect root or `sudo`.

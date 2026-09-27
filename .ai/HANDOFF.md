@@ -2,14 +2,15 @@
 
 ## Resume block (read first)
 
-- Repo state: branch `dev` (tracking `origin/dev`), working tree `clean`; `main` merged via PR #1 (`e57092d`) and carries the same content
+- Repo state: branch `main`; Zsh automation completed locally; changes staged pending commit; observed Git author identity will be configured locally. SSH key was created for GitHub registration.
 - Source of truth: `AGENTS.md` → `.ai/`
-- Budget / usage observed: `<unknown>`
-- Checkpoint updated: `2026-09-15`
-- Last goal: Remove AnyDesk and TeamViewer (ADR-009) and merge the full modernization into `main` (PR #1). Done.
-- Exact next action: Validate `ubuntu-system-prepare-baremetal.sh` (bare metal) end-to-end on a real Ubuntu 24.04/26.04 **amd64** desktop (snap/flatpak/GUI).
-- Blocked by: No disposable Ubuntu **amd64 desktop** target available in this session.
-- Resume prompt: `Read AGENTS.md and .ai/HANDOFF.md. Continue from the Resume block. Do not rediscover context.`
+- Budget / usage observed: unknown
+- Checkpoint updated: 2026-09-27
+- Last goal: Automate the local Zsh setup, including completion, Ubuntu/Git prompt and terminal font. Completed.
+- Exact next action: If requested, validate provisioning on a disposable fresh Ubuntu/WSL host; desktop validation also remains pending.
+- Blocked by: no disposable fresh desktop/WSL host used in this session.
+- Changed files: shared installer, `assets/`, README and task/context documentation.
+- Validation: Bash/Zsh/PowerShell syntax, XML parsing, diff whitespace, isolated double installation with host mutations stubbed, real Zsh startup/plugins/kubectl/Git branch passed. ShellCheck unavailable. Full provisioning and new Windows helper execution not run.
 
 ## Goal
 
@@ -62,7 +63,7 @@ The scripts are modernized and pass `bash -n` and `shellcheck`. `ubuntu-system-p
 - `K8S_MINOR` defaults to `v1.36` (`kubectl` 1.36.4 verified) and may lag the latest release.
 - PyDrive was removed; no Google Drive client is installed now (use `pipx`/`rclone`).
 - AnyDesk and TeamViewer were removed; remote desktop is X2Go (VM) with Remmina as client.
-- All work is committed, pushed, and merged to `main` (PR #1); nothing is uncommitted.
+- Earlier modernization was merged in PR #1. The 2026-09-27 Zsh automation is local and has not been pushed.
 
 ## Validation Performed
 
